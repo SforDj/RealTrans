@@ -3,11 +3,11 @@ import tensorflow as tf
 
 class RealTransModel:
     def __init__(self, config, is_training=True):
-        voc_cnt = config.voc_cnt
-        rel_cnt = config.rel_cnt
-        batch_size = config.batch_size
-        embedding_size = config.embedding_size
-        offset = config.offset
+        voc_cnt = config.VOC_CNT
+        rel_cnt = config.REL_CNT
+        batch_size = config.BATCH_SIZE
+        embedding_size = config.EMBEDDING_SIZE
+        offset = config.OFFSET
 
         self.heads = tf.placeholder(dtype=tf.int32, shape=[batch_size], name="heads in a batch")
         self.relations = tf.placeholder(dtype=tf.int32, shape=[batch_size], name="relations in a batch")
@@ -67,20 +67,18 @@ class RealTransModel:
 
 class TransNSigmoidModel:
     def __init__(self, config, is_training=True):
-        voc_cnt = config.voc_cnt
-        rel_cnt = config.rel_cnt
-        batch_size = config.batch_size
-        embedding_size = config.embedding_size
-        offset = config.offset
-        num_sampled = config.num_sampled
+        voc_cnt = config.VOC_CNT
+        rel_cnt = config.REL_CNT
+        batch_size = config.BATCH_SIZE
+        embedding_size = config.EMBEDDING_SIZE
+        num_sampled = config.NUM_SAMPLED
 
         self.heads = tf.placeholder(dtype=tf.int32, shape=[batch_size], name="heads in a batch")
         self.relations = tf.placeholder(dtype=tf.int32, shape=[batch_size], name="relations in a batch")
         self.tails = tf.placeholder(dtype=tf.int32, shape=[batch_size], name="tails in a batch")
 
-        self.bi_direction = tf.placeholder(dtype=bool)
-        self.include_rel = tf.placeholder(dtype=bool)
-
+        # self.bi_direction = tf.placeholder(dtype=bool)
+        # self.include_rel = tf.placeholder(dtype=bool)
 
         with tf.device('/cpu:0'):
             self.voc_embeddings = tf.get_variable(name="voc emb", shape=[voc_cnt, embedding_size], dtype=tf.float32)
@@ -89,9 +87,9 @@ class TransNSigmoidModel:
             emb_heads = tf.nn.embedding_lookup(params=self.voc_embeddings, ids=self.heads, name="heads emb in batch")
             emb_rels = tf.nn.embedding_lookup(params=self.rel_embeddings, ids=self.relations, name="rels emb in batch")
 
-        trans_weights = tf.get_variable(name="trans_weight", shape=[ embedding_size, embedding_size ], dtype=tf.float32,
+        trans_weights = tf.get_variable(name="trans_weight", shape=[embedding_size, embedding_size], dtype=tf.float32,
                                         trainable=True)
-        trans_biases = tf.get_variable(name="trans_biases", shape=[ embedding_size ], dtype=tf.float32, trainable=True)
+        trans_biases = tf.get_variable(name="trans_biases", shape=[embedding_size], dtype=tf.float32, trainable=True)
 
         trans_tail = tf.add(
             tf.matmul(
@@ -143,7 +141,7 @@ class TransNSigmoidModel:
         if is_training:
             global_step = tf.contrib.framework.get_or_create_global_step()
             learning_rate = tf.train.exponential_decay(
-                config.base_learning_rate,
+                config.BASE_LEARNING_RATE,
                 global_step,
                 300,
                 0.98

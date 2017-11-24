@@ -3,7 +3,7 @@ from data_handler.constant import NewVocConfig
 
 import os
 import pickle
-
+import random
 
 def read_voc_list():
     entity_voc_filename = os.path.join(Files.VOC_FILE_DIRECTORY, Files.ENTITY_VOC_FILENAME)
@@ -81,14 +81,19 @@ def build_ids(entity_voc_list, relation_voc_list):
             entry = [head, relation, tail]
             data.append(entry)
 
+    random.shuffle(data)
     with open(id_file, 'wb') as id_file_write:
         pickle.dump(data, id_file_write, True)
 
     return data
 
 
-entity_voc_list, relation_voc_list = read_voc_list()
-data = build_ids(entity_voc_list, relation_voc_list)
-for i in range(0, 10):
-    print(data[i])
+def get_train_and_test_ids(percent=0.8):
+    entity_voc_list, relation_voc_list = read_voc_list()
+    ids = build_ids(entity_voc_list, relation_voc_list)
+    train_ids = ids[0:int(len(ids) * percent)]
+    test_ids = ids[int(len(ids) * percent):]
+    return train_ids, test_ids
+
+
 

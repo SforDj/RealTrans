@@ -17,3 +17,12 @@ class NewVocConfig:
     MIN_RELATION_APPEARANCE = 1
 
 
+class RealTransModelConfig:
+    TRAIN_TEST_RATIO = 0.8
+    BATCH_SIZE = 32
+    INIT_SCALE = 0.5
+    VOC_CNT = 5000000
+    REL_CNT = 600
+    NUM_SAMPLED = 64
+    EMBEDDING_SIZE = 256
+    BASE_LEARNING_RATE = 0.1
